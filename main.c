@@ -10,17 +10,12 @@ typedef struct node {
     struct node* next;
 } node;
 
-struct node* head = NULL, * last = NULL;
-void push(void), review(void), pop(void);
-char find_el[256];
-struct node* find(char* name);
-struct node* get_struct(void);
 
-struct node* get_struct(void) {
+node* get_stack() {
     struct node* p = NULL;
     char s[256];
 
-    if ((p = (node*)malloc(sizeof(struct node))) == NULL)
+    if ((p = (node*)malloc(sizeof(node))) == NULL)
     {
         printf("Ошибка при распределении памяти\n");
         exit(1);
@@ -39,84 +34,49 @@ struct node* get_struct(void) {
     return p;
 }
 
-void push(void) {
-    struct node* p = NULL;
-    p = get_struct();
-    if (p == NULL) return;
-
-    if (head == NULL)
-    {
-        head = p;
-        last = p;
-    }
-    else
-    {
-        last->next = p;
-        last = p;
+void push(node** s) {
+    node* p = get_stack();
+    if (p != NULL) {
+        p->next = *s;
+        *s = p;
     }
 }
 
-void pop(void) {
-    if (head == NULL)
-    {
-        printf("\nОчередь пуста\n");
+void pop(node** s) {
+    node* p = *s;
+    if (*s == NULL) {
+        printf("\nСтек пуст\n");
         return;
     }
-
-    struct node* temp = head;
-    head = head->next;
-    free(temp);
-
-    if (head == NULL)
-    {
-        last = NULL;
-    }
+    *s = (*s)->next;
+    printf("\nУдален элемент: %s\n", p->inf);
+    free(p);
 }
 
-void review(void) {
-    struct node* struc = head;
-    printf("\n");
-    if (head == NULL)
-    {
-        printf("\nОчередь пуста\n");
-    }
-    while (struc)
-    {
-        printf("Имя - %s\n", struc->inf);
-        struc = struc->next;
+void review(node* s) {
+    node* p = s;
+    printf("\nСтек\n");
+    if (s == NULL) printf("Стек пуст\n");
+    while (p) {
+        printf("Имя - %s\n", p->inf);
+        p = p->next;
     }
     return;
 }
 
-struct node* find(char* name) {
-    struct node* struc = head;
-    if (head == NULL)
-    {
-        printf("\nОчередь пуста\n");
-    }
-    while (struc)
-    {
-        if (strcmp(name, struc->inf) == 0)
-        {
-            return struc;
-        }
-        struc = struc->next;
-    }
-    printf("\nЭлемент не найден\n");
-    return NULL;
-}
-
 int main() {
     setlocale(LC_ALL, "Rus");
-    push();
-    push();
-    push();
-    review();
-    pop();
-    review(); 
-    pop();
-    pop();
-    pop();
-
+    node* stack = NULL;
+    push(&stack);
+    push(&stack);
+    push(&stack);
+    review(stack);
+    pop(&stack);
+    review(stack);
+    pop(&stack);
+    review(stack);
+    pop(&stack);
+    review(stack);
+    pop(&stack);
     return 0;
 }
