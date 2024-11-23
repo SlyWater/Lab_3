@@ -11,13 +11,12 @@ typedef struct node {
 } node;
 
 struct node* head = NULL, * last = NULL;
-void spstore(void), review(void), del(char* name);
+void push(void), review(void), pop(void);
 char find_el[256];
 struct node* find(char* name);
 struct node* get_struct(void);
 
-struct node* get_struct(void)
-{
+struct node* get_struct(void) {
     struct node* p = NULL;
     char s[256];
 
@@ -40,8 +39,7 @@ struct node* get_struct(void)
     return p;
 }
 
-void spstore(void)
-{
+void push(void) {
     struct node* p = NULL;
     p = get_struct();
     if (p == NULL) return;
@@ -51,45 +49,50 @@ void spstore(void)
         head = p;
         last = p;
     }
-    else if (strlen(p->inf) < strlen(head->inf))
-    {
-        p->next = head;
-        head = p;
-    }
     else
     {
-        struct node* current = head;
-        while (current->next != NULL && strlen(current->next->inf) <= strlen(p->inf))
-        {
-            current = current->next;
-        }
-        p->next = current->next;
-        current->next = p;
-        if (p->next == NULL) last = p;
+        last->next = p;
+        last = p;
     }
 }
 
-void review(void)
-{
-    struct node* struc = head;
+void pop(void) {
     if (head == NULL)
     {
-        printf("Список пуст\n");
+        printf("\nОчередь пуста\n");
+        return;
+    }
+
+    struct node* temp = head;
+    head = head->next;
+    free(temp);
+
+    if (head == NULL)
+    {
+        last = NULL;
+    }
+}
+
+void review(void) {
+    struct node* struc = head;
+    printf("\n");
+    if (head == NULL)
+    {
+        printf("\nОчередь пуста\n");
     }
     while (struc)
     {
-        printf("Имя - %s, \n", struc->inf);
+        printf("Имя - %s\n", struc->inf);
         struc = struc->next;
     }
     return;
 }
 
-struct node* find(char* name)
-{
+struct node* find(char* name) {
     struct node* struc = head;
     if (head == NULL)
     {
-        printf("Список пуст\n");
+        printf("\nОчередь пуста\n");
     }
     while (struc)
     {
@@ -99,72 +102,21 @@ struct node* find(char* name)
         }
         struc = struc->next;
     }
-    printf("Элемент не найден\n");
+    printf("\nЭлемент не найден\n");
     return NULL;
-}
-
-void del(char* name)
-{
-    struct node* struc = head;
-    struct node* prev = NULL;
-    int flag = 0;
-
-    if (head == NULL)
-    {
-        printf("Список пуст\n");
-        return;
-    }
-
-    if (strcmp(name, struc->inf) == 0)
-    {
-        flag = 1;
-        head = struc->next;
-        free(struc);
-        struc = head;
-    }
-    else
-    {
-        prev = struc;
-        struc = struc->next;
-    }
-
-    while (struc)
-    {
-        if (strcmp(name, struc->inf) == 0)
-        {
-            flag = 1;
-            if (struc->next)
-            {
-                prev->next = struc->next;
-                free(struc);
-                struc = prev->next;
-            }
-            else
-            {
-                prev->next = NULL;
-                free(struc);
-                return;
-            }
-        }
-        else
-        {
-            prev = struc;
-            struc = struc->next;
-        }
-    }
-
-    if (flag == 0)
-    {
-        printf("Элемент не найден\n");
-        return;
-    }
 }
 
 int main() {
     setlocale(LC_ALL, "Rus");
-    spstore();
-    spstore();
-    spstore();
+    push();
+    push();
+    push();
     review();
+    pop();
+    review(); 
+    pop();
+    pop();
+    pop();
+
     return 0;
 }
